@@ -45,7 +45,7 @@ export default function Home() {
           contentClassName="!p-0"
           innerClassName="relative z-[1] w-full rounded-t-[80px] bg-surface-2 px-5 pt-10 pb-10 lg:px-5 lg:pt-16 lg:pb-16"
         >
-          <ProjectsSection />
+          <ProjectsSection viewEnabled={false} />
         </SplitSection>
 
         <SplitSection id="recipe" label="App-Stack -&gt;" padding="large">

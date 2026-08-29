@@ -19,7 +19,7 @@ export default function ProjectsPage() {
         subtitle="Curious what design projects i’ve built or contributed to? Take a look."
       />
       <div className="px-5 pb-16">
-        <ProjectsSection showIntro={false} items={projects} />
+        <ProjectsSection showIntro={false} items={projects} viewEnabled={false} />
       </div>
       <LetsBuild />
       <Footer />

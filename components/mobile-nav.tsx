@@ -219,7 +219,10 @@ export function MobileNav() {
               onClick={() => setConnectOpen(true)}
               className="flex h-full w-full items-center justify-center gap-2 rounded-[14px] bg-primary px-5 text-ink shadow-[inset_0px_-2px_0px_2px_rgba(255,255,255,0.12),inset_0px_-8px_2px_0px_rgba(0,0,0,0.12)]"
             >
-              <span className="whitespace-nowrap text-[18px] font-medium leading-[1.1]">
+              <span
+                className="t-shimmer t-shimmer-on-dark whitespace-nowrap text-[18px] font-medium leading-[1.1]"
+                data-text="Connect"
+              >
                 Connect
               </span>
               <span aria-hidden className="text-[18px] leading-[1.2]">

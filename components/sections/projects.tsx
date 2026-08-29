@@ -1,14 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { DisabledProjectViewButton } from "@/components/disabled-project-view-button";
 import { TiltCard } from "@/components/tilt-card";
 import { projects, type Project } from "@/content/projects";
 
 export function ProjectsSection({
   showIntro = true,
   items = projects.filter((p) => p.featured),
+  viewEnabled = true,
 }: {
   showIntro?: boolean;
   items?: Project[];
+  viewEnabled?: boolean;
 }) {
   return (
     <div className="mx-auto w-full max-w-[335px] lg:max-w-[336px]">
@@ -28,7 +31,11 @@ export function ProjectsSection({
 
       <div className="flex flex-col gap-10">
         {items.map((project) => (
-          <ProjectCard key={project.slug} project={project} />
+          <ProjectCard
+            key={project.slug}
+            project={project}
+            viewEnabled={viewEnabled}
+          />
         ))}
       </div>
 
@@ -53,7 +60,13 @@ export function ProjectsSection({
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({
+  project,
+  viewEnabled,
+}: {
+  project: Project;
+  viewEnabled: boolean;
+}) {
   const height = project.height === "tall" ? "h-[400px]" : "h-[240px]";
   const tooltipId = `view-tt-${project.slug}`;
 
@@ -131,20 +144,16 @@ function ProjectCard({ project }: { project: Project }) {
           <p className="text-[14px] text-dim">Client</p>
           <p className="mt-1 text-[16px] font-medium text-primary">{project.client}</p>
         </div>
-        <span className="t-tt-wrap">
-          <span
-            role="button"
-            tabIndex={0}
-            aria-disabled="true"
-            aria-describedby={tooltipId}
-            className="t-tt-trigger inline-flex h-11 cursor-not-allowed items-center rounded-2xl border border-primary/40 px-5 text-[18px] font-medium text-primary/40"
+        {viewEnabled ? (
+          <Link
+            href={`/projects/${project.slug}`}
+            className="inline-flex h-11 items-center rounded-2xl border border-primary px-5 text-[18px] font-medium text-primary transition-opacity hover:opacity-80"
           >
             View
-          </span>
-          <span id={tooltipId} className="t-tt" role="tooltip">
-            coming soon.
-          </span>
-        </span>
+          </Link>
+        ) : (
+          <DisabledProjectViewButton tooltipId={tooltipId} />
+        )}
       </div>
     </article>
   );

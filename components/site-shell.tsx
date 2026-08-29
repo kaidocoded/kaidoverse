@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useMemo, useState } from "react";
+import { ProjectViewToastProvider } from "@/components/project-view-toast";
 
 type NavContextValue = {
   open: boolean;
@@ -21,5 +22,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const value = useMemo(() => ({ open, setOpen }), [open]);
 
-  return <NavContext.Provider value={value}>{children}</NavContext.Provider>;
+  return (
+    <ProjectViewToastProvider>
+      <NavContext.Provider value={value}>{children}</NavContext.Provider>
+    </ProjectViewToastProvider>
+  );
 }

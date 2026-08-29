@@ -3,6 +3,45 @@
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/site";
 
+function Digit({
+  char,
+  stagger,
+}: {
+  char: string;
+  stagger?: 1 | 2;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const prev = useRef<string | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (prev.current === null) {
+      prev.current = char;
+      el.classList.add("is-animating");
+      return;
+    }
+
+    if (prev.current === char) return;
+
+    prev.current = char;
+    el.classList.remove("is-animating");
+    void el.offsetHeight;
+    el.classList.add("is-animating");
+  }, [char]);
+
+  return (
+    <span
+      ref={ref}
+      className="t-digit"
+      {...(stagger ? { "data-stagger": stagger } : {})}
+    >
+      {char}
+    </span>
+  );
+}
+
 function DigitGroup({
   chars,
   staggerLastTwo = false,
@@ -12,30 +51,8 @@ function DigitGroup({
   staggerLastTwo?: boolean;
   className?: string;
 }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const prev = useRef<string | null>(null);
-
-  useEffect(() => {
-    const key = chars.join("");
-    const group = ref.current;
-    if (!group) return;
-
-    if (prev.current === null) {
-      prev.current = key;
-      group.classList.add("is-animating");
-      return;
-    }
-
-    if (prev.current === key) return;
-
-    prev.current = key;
-    group.classList.remove("is-animating");
-    void group.offsetHeight;
-    group.classList.add("is-animating");
-  }, [chars]);
-
   return (
-    <span ref={ref} className={`t-digit-group ${className ?? ""}`.trim()}>
+    <span className={`t-digit-group ${className ?? ""}`.trim()}>
       {chars.map((char, index) => {
         let stagger: 1 | 2 | undefined;
         if (staggerLastTwo && chars.length >= 2) {
@@ -43,23 +60,18 @@ function DigitGroup({
           if (index === chars.length - 1) stagger = 2;
         }
 
-        return (
-          <span
-            key={index}
-            className="t-digit"
-            {...(stagger ? { "data-stagger": stagger } : {})}
-          >
-            {char}
-          </span>
-        );
+        return <Digit key={index} char={char} stagger={stagger} />;
       })}
     </span>
   );
 }
 
-function Colon() {
+function Colon({ visible }: { visible: boolean }) {
   return (
-    <span className="clock-colon" aria-hidden>
+    <span
+      className={`clock-colon${visible ? " is-visible" : ""}`}
+      aria-hidden
+    >
       :
     </span>
   );
@@ -86,12 +98,14 @@ type TimeParts = {
 };
 
 function TimeLine({ parts }: { parts: TimeParts }) {
+  const colonVisible = Number.parseInt(parts.seconds, 10) % 2 === 0;
+
   return (
     <span className="clock-time">
       <DigitGroup chars={parts.hours.split("")} />
-      <Colon />
+      <Colon visible={colonVisible} />
       <DigitGroup chars={parts.minutes.split("")} staggerLastTwo />
-      <Colon />
+      <Colon visible={colonVisible} />
       <FixedDigitPair chars={parts.seconds.split("")} />
       <span className="ml-[0.15em] inline-block min-w-[2ch] text-left align-baseline">
         <DigitGroup chars={parts.period.split("")} staggerLastTwo />
@@ -109,6 +123,13 @@ export function LocalClock() {
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
   }, []);
+
+  const weekday = now
+    ? new Intl.DateTimeFormat("en-US", {
+        timeZone: site.timezone,
+        weekday: "long",
+      }).format(now)
+    : "—";
 
   const date = now
     ? new Intl.DateTimeFormat("en-US", {
@@ -149,6 +170,9 @@ export function LocalClock() {
     <div>
       <p className="text-[14px] leading-[1.4] text-dim">{site.timezoneLabel}</p>
       <p className="mt-2 font-display text-[48px] leading-[1.1] text-primary md:text-[60px]">
+        {weekday}
+      </p>
+      <p className="font-display text-[48px] leading-[1.1] text-primary md:text-[60px]">
         {date}
       </p>
       <p
