@@ -8,14 +8,15 @@ import { useNav } from "@/components/site-shell";
 import { SiteButton } from "@/components/site-button";
 
 const PAD = 12;
-const COLLAPSED = 84;
-const EXPANDED = 240;
 const ICON_CLOSED = 60;
 const ICON_OPEN = 44;
 const BUTTON_H = 60;
 const BUTTON_GAP = 12;
-const BUILD_OPEN_Y = 76;
-const CHAT_OPEN_Y = BUILD_OPEN_Y + BUTTON_H + BUTTON_GAP;
+const HEADER_GAP = 20;
+const BUILD_OPEN_Y = PAD + ICON_OPEN + HEADER_GAP;
+const COLLAPSED = PAD + ICON_CLOSED + PAD;
+const EXPANDED =
+  BUILD_OPEN_Y + BUTTON_H * 3 + BUTTON_GAP * 2 + PAD;
 const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 const iconBorder =
   "relative block size-full overflow-clip rounded-[14px] border border-primary/8";
@@ -227,18 +228,19 @@ export function MobileNav() {
             </button>
           </div>
 
-          {/* Build */}
+          {/* CTAs */}
           <div
-            className="absolute"
+            className="absolute flex flex-col"
             style={{
               left: PAD,
               right: PAD,
-              top: PAD,
-              height: BUTTON_H,
+              top: BUILD_OPEN_Y,
+              bottom: PAD,
+              gap: BUTTON_GAP,
               opacity: connectOpen ? 1 : 0,
               transform: connectOpen
-                ? `translate3d(0,${BUILD_OPEN_Y}px,0)`
-                : "translate3d(0,0,0)",
+                ? "translate3d(0,0,0)"
+                : "translate3d(0,8px,0) scale(0.96)",
               transition: `opacity 200ms ease, transform 300ms ${EASE}`,
               transitionDelay: connectOpen ? "20ms" : "0ms",
               pointerEvents: connectOpen ? "auto" : "none",
@@ -248,32 +250,19 @@ export function MobileNav() {
               href={site.ctas.build.href}
               label={site.ctas.build.label}
               variant="filled"
-              className="w-full"
+              className="w-full shrink-0"
             />
-          </div>
-
-          {/* Chat / Request a Collab */}
-          <div
-            className="absolute"
-            style={{
-              left: PAD,
-              right: PAD,
-              top: PAD,
-              height: BUTTON_H,
-              opacity: connectOpen ? 1 : 0,
-              transform: connectOpen
-                ? `translate3d(0,${CHAT_OPEN_Y}px,0)`
-                : "translate3d(0,0,0)",
-              transition: `opacity 200ms ease, transform 300ms ${EASE}`,
-              transitionDelay: connectOpen ? "40ms" : "0ms",
-              pointerEvents: connectOpen ? "auto" : "none",
-            }}
-          >
             <SiteButton
               href={site.ctas.chat.href}
               label={site.ctas.chat.label}
               variant="outlined"
-              className="w-full"
+              className="w-full shrink-0"
+            />
+            <SiteButton
+              href={site.ctas.email.href}
+              label={site.ctas.email.label}
+              variant="tertiary"
+              className="w-full shrink-0"
             />
           </div>
         </div>

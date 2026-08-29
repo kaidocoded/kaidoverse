@@ -3,35 +3,56 @@
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/site";
 
-function PopDigit({
-  char,
-  stagger,
+function DigitGroup({
+  chars,
+  staggerLastTwo = false,
+  className,
 }: {
-  char: string;
-  stagger?: 1 | 2;
+  chars: string[];
+  staggerLastTwo?: boolean;
+  className?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const prevChar = useRef<string | null>(null);
+  const prev = useRef<string | null>(null);
 
   useEffect(() => {
-    if (prevChar.current === null) {
-      prevChar.current = char;
+    const key = chars.join("");
+    const group = ref.current;
+    if (!group) return;
+
+    if (prev.current === null) {
+      prev.current = key;
+      group.classList.add("is-animating");
       return;
     }
-    if (char === prevChar.current) return;
 
-    const el = ref.current;
-    if (!el) return;
+    if (prev.current === key) return;
 
-    el.classList.remove("is-popping");
-    void el.offsetHeight;
-    el.classList.add("is-popping");
-    prevChar.current = char;
-  }, [char]);
+    prev.current = key;
+    group.classList.remove("is-animating");
+    void group.offsetHeight;
+    group.classList.add("is-animating");
+  }, [chars]);
 
   return (
-    <span ref={ref} className="t-digit is-popping" data-stagger={stagger}>
-      {char}
+    <span ref={ref} className={`t-digit-group ${className ?? ""}`.trim()}>
+      {chars.map((char, index) => {
+        let stagger: 1 | 2 | undefined;
+        if (staggerLastTwo && chars.length >= 2) {
+          if (index === chars.length - 2) stagger = 1;
+          if (index === chars.length - 1) stagger = 2;
+        }
+
+        return (
+          <span
+            key={index}
+            className="t-digit"
+            {...(stagger ? { "data-stagger": stagger } : {})}
+          >
+            {char}
+          </span>
+        );
+      })}
     </span>
   );
 }
@@ -44,37 +65,15 @@ function Colon() {
   );
 }
 
-function FixedDigitPair({
-  chars,
-  keyPrefix,
-}: {
-  chars: string[];
-  keyPrefix: string;
-}) {
+function FixedDigitPair({ chars }: { chars: string[] }) {
   return (
     <span className="relative inline-block align-baseline">
-      <span className="invisible pointer-events-none select-none" aria-hidden>
+      <span className="pointer-events-none invisible select-none" aria-hidden>
         88
       </span>
       <span className="absolute inset-0 text-left">
-        {chars.map((char, index) => (
-          <PopDigit
-            key={`${keyPrefix}-${index}`}
-            char={char}
-            stagger={index === 0 ? 1 : 2}
-          />
-        ))}
+        <DigitGroup chars={chars} staggerLastTwo />
       </span>
-    </span>
-  );
-}
-
-function Period({ period }: { period: string }) {
-  return (
-    <span className="ml-[0.15em] inline-block min-w-[2ch] text-left align-baseline">
-      {period.split("").map((char, index) => (
-        <PopDigit key={`p-${index}`} char={char} />
-      ))}
     </span>
   );
 }
@@ -89,20 +88,14 @@ type TimeParts = {
 function TimeLine({ parts }: { parts: TimeParts }) {
   return (
     <span className="clock-time">
-      {parts.hours.split("").map((char, index) => (
-        <PopDigit key={`h-${index}`} char={char} />
-      ))}
+      <DigitGroup chars={parts.hours.split("")} />
       <Colon />
-      {parts.minutes.split("").map((char, index) => (
-        <PopDigit
-          key={`m-${index}`}
-          char={char}
-          stagger={index === 0 ? 1 : 2}
-        />
-      ))}
+      <DigitGroup chars={parts.minutes.split("")} staggerLastTwo />
       <Colon />
-      <FixedDigitPair chars={parts.seconds.split("")} keyPrefix="s" />
-      <Period period={parts.period} />
+      <FixedDigitPair chars={parts.seconds.split("")} />
+      <span className="ml-[0.15em] inline-block min-w-[2ch] text-left align-baseline">
+        <DigitGroup chars={parts.period.split("")} staggerLastTwo />
+      </span>
     </span>
   );
 }

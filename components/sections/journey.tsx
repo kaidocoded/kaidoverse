@@ -3,7 +3,6 @@ import Link from "next/link";
 import { CurrentlyOrb } from "@/components/currently-orb";
 import { JourneyTimeline } from "@/components/journey-timeline";
 import { journey } from "@/content/journey";
-import { site } from "@/content/site";
 
 export function JourneySection({
   showIntro = true,
@@ -47,27 +46,6 @@ export function JourneySection({
           ))}
         </ol>
       </JourneyTimeline>
-
-      <div className="text-center">
-        <p className="text-[28px] font-medium leading-[1.1] text-primary">
-          {journey.opportunity}
-        </p>
-        <a
-          href={site.ctas.job.href}
-          className="mt-6 inline-flex items-center justify-center gap-2 rounded-[14px] border-2 border-dashed border-primary px-6 py-3 text-[18px] font-medium leading-[1.1] text-primary transition-opacity hover:opacity-80"
-        >
-          {site.ctas.job.label}
-          <span className="flex size-[17px] items-center justify-center">
-            <Image
-              src="/icons/arrow.svg"
-              alt=""
-              width={12}
-              height={12}
-              className="size-3 rotate-45"
-            />
-          </span>
-        </a>
-      </div>
     </div>
   );
 }

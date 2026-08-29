@@ -11,7 +11,7 @@ export function LetsBuild() {
             <h2 className="font-display text-[60px] leading-[1.1] text-primary md:text-[60px]">
               Let’s build.
             </h2>
-            <span className="absolute -top-1 right-6 size-[40px] rotate-30 overflow-clip rounded-full border border-surface-3 lg:right-0">
+            <span className="absolute -top-1 right-6 size-[40px] rotate-30 overflow-clip rounded-full border border-surface-3 lg:hidden">
               <Image
                 src="/images/avatar.jpg"
                 alt=""

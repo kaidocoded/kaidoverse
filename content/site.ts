@@ -20,6 +20,10 @@ export const site = {
       label: "Request a Collab",
       badge: "$80",
     },
+    email: {
+      href: "mailto:hello@kaidoverse.com",
+      label: "Contact via email",
+    },
     job: {
       href: "mailto:hello@kaidoverse.com?subject=Job%20Offer",
       label: "Send Job Offer",

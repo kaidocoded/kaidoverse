@@ -5,7 +5,6 @@ import { LetsBuild } from "@/components/sections/lets-build";
 import { ProjectsSection } from "@/components/sections/projects";
 import { RecipeSection } from "@/components/sections/recipe";
 import { ThingsIDo } from "@/components/sections/things-i-do";
-import { WhatWhere } from "@/components/sections/what-where";
 import { SectionLabel, SplitSection } from "@/components/split-section";
 
 export default function Home() {
@@ -26,10 +25,6 @@ export default function Home() {
           contentClassName="overflow-x-clip !px-0 lg:!px-5"
         >
           <ThingsIDo />
-        </SplitSection>
-
-        <SplitSection id="where" label="What/Where -&gt;">
-          <WhatWhere />
         </SplitSection>
 
         <SplitSection

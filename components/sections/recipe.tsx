@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { ArrowOutIcon } from "@/components/arrow-out-icon";
 import { recipe } from "@/content/stack";
@@ -8,9 +11,17 @@ function RecipeGroup({
 }: {
   group: (typeof recipe.groups)[number];
 }) {
+  const [open, setOpen] = useState(group.title === "Design");
+
   return (
-    <details className="group" open>
-      <summary className="flex cursor-pointer list-none items-end gap-3 group-open:mb-8 [&::-webkit-details-marker]:hidden">
+    <details className="group" open={open}>
+      <summary
+        className="flex cursor-pointer list-none items-end gap-3 group-open:mb-8 [&::-webkit-details-marker]:hidden"
+        onClick={(e) => {
+          e.preventDefault();
+          setOpen((prev) => !prev);
+        }}
+      >
         <h3 className="text-[28px] leading-[1.1] text-primary">{group.title}</h3>
         <Image
           src="/icons/chevron.svg"
@@ -65,15 +76,15 @@ export function RecipeSection({ showIntro = true }: { showIntro?: boolean }) {
   return (
     <div className="mx-auto w-full max-w-[454px]">
       {showIntro ? (
-        <div className="mb-12 text-center">
+        <div className="mb-20 text-center">
           <p className="font-display text-[48px] leading-[1.1] text-primary md:text-[60px]">
             {recipe.kicker}
           </p>
-          <div className="mt-1 flex items-end justify-center gap-2">
+          <div className="mt-1 flex flex-col items-center gap-0">
             <h2 className="font-display text-[48px] leading-[1.1] text-primary md:text-[60px]">
               {recipe.heading}
             </h2>
-            <span className="pb-2 text-[13px] text-dim">{recipe.note}</span>
+            <span className="text-[13px] text-dim">{recipe.note}</span>
           </div>
           <p className="mt-5 text-[16px] leading-[1.2] text-dim">{recipe.body}</p>
         </div>

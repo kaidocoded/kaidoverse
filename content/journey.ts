@@ -11,7 +11,6 @@ export type JourneyEntry = {
 export const journey = {
   heading: "Journey",
   subhead: "Dive-in to my journey as a creative thinker and maker of things.",
-  opportunity: "Have an opportunity?",
   entries: [
     {
       start: "02/22’",

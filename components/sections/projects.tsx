@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { TiltCard } from "@/components/tilt-card";
 import { projects, type Project } from "@/content/projects";
 
 export function ProjectsSection({
@@ -58,8 +59,9 @@ function ProjectCard({ project }: { project: Project }) {
 
   return (
     <article className="flex flex-col gap-3">
-      <div
-        className={`flex ${height} flex-col overflow-clip rounded-[12px] border border-surface-3 bg-chrome`}
+      <TiltCard
+        className={height}
+        cardClassName="flex flex-col rounded-[12px] border border-surface-3 bg-chrome"
       >
         <div className="flex h-10 items-center justify-between gap-4 px-2">
           <div className="flex items-center gap-2">
@@ -123,7 +125,7 @@ function ProjectCard({ project }: { project: Project }) {
             />
           </div>
         </div>
-      </div>
+      </TiltCard>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[14px] text-dim">Client</p>
