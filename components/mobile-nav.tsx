@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Liquid } from "liquid-gooey";
 import { site } from "@/content/site";
 import { useNav } from "@/components/site-shell";
 import { SiteButton } from "@/components/site-button";
@@ -17,7 +16,7 @@ const BUTTON_H = 60;
 const BUTTON_GAP = 12;
 const BUILD_OPEN_Y = 76;
 const CHAT_OPEN_Y = BUILD_OPEN_Y + BUTTON_H + BUTTON_GAP;
-const motion = "smooth";
+const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 const iconBorder =
   "relative block size-full overflow-clip rounded-[14px] border border-primary/8";
 
@@ -28,11 +27,7 @@ function AvatarLink({ size }: { size: number }) {
       : "top-[5px] right-[1px] text-[9px]";
 
   return (
-    <Link
-      href="/"
-      aria-label={site.name}
-      className={iconBorder}
-    >
+    <Link href="/" aria-label={site.name} className={iconBorder}>
       <Image
         src="/images/avatar-nav.jpg"
         alt=""
@@ -104,14 +99,12 @@ export function MobileNav() {
   }, [connectOpen]);
 
   useEffect(() => {
-    document.body.style.setProperty(
-      "--mobile-nav-reserve",
-      `${connectOpen ? EXPANDED : COLLAPSED}px`,
-    );
+    // Fixed nav — reserve collapsed height only. Expanding must not reflow the page.
+    document.body.style.setProperty("--mobile-nav-reserve", `${COLLAPSED}px`);
     return () => {
       document.body.style.removeProperty("--mobile-nav-reserve");
     };
-  }, [connectOpen]);
+  }, []);
 
   const openMenu = () => {
     setConnectOpen(false);
@@ -127,62 +120,31 @@ export function MobileNav() {
       <div
         aria-hidden
         onClick={() => setConnectOpen(false)}
-        className={`fixed inset-0 z-30 bg-ink/20 backdrop-blur-[4px] transition-opacity duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${connectOpen ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`fixed inset-0 z-30 bg-ink/25 transition-opacity duration-200 ease-out lg:hidden ${connectOpen ? "opacity-100" : "pointer-events-none opacity-0"}`}
       />
       <nav className="pointer-events-none fixed inset-x-0 bottom-5 z-40 px-5 lg:hidden">
-      <Liquid
-        blur={6}
-        contrast={18}
-        fill="rgba(224,222,211,0.85)"
-        shadow="0px 2px 12px 2px rgba(0,0,0,0.06)"
-        filterPadding={48}
-        className="pointer-events-auto w-full"
-      >
         <div
           id="mobile-connect-sheet"
-          className="relative w-full"
+          className="pointer-events-auto relative w-full will-change-[height]"
           style={{
             height,
-            transition: "height 420ms cubic-bezier(0.22, 1, 0.36, 1)",
+            transition: `height 320ms ${EASE}`,
           }}
         >
-          {/* Glass pill — size morphs with the sheet */}
-          <Liquid.Item
-            morph={{ shape: true, bounce: 0, contentBlur: 0 }}
-            radius={26}
-            className="block w-full"
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "block",
-            }}
-          >
-            <div
-              className="relative w-full overflow-clip rounded-[26px] border border-primary/8 bg-ink/45 shadow-[0px_2px_12px_2px_rgba(0,0,0,0.06)] backdrop-blur-[32px] backdrop-saturate-150"
-              style={{
-                height,
-                transition: "height 420ms cubic-bezier(0.22, 1, 0.36, 1)",
-              }}
-            />
-          </Liquid.Item>
+          {/* Glass pill — static blur (not animated) so expand stays smooth */}
+          <div className="absolute inset-0 overflow-clip rounded-[26px] border border-primary/8 bg-ink/45 shadow-[0px_2px_12px_2px_rgba(0,0,0,0.06)] backdrop-blur-[24px] [transform:translateZ(0)]" />
 
           {/* Back */}
-          <Liquid.Item
-            x={0}
-            y={0}
-            scale={1}
-            transition={motion}
-            radius={14}
-            className="block"
+          <div
+            className="absolute"
             style={{
-              position: "absolute",
               left: PAD,
               top: PAD,
               width: ICON_OPEN,
               height: ICON_OPEN,
-              display: "block",
               opacity: connectOpen ? 1 : 0,
-              transition: "opacity 280ms ease",
+              transform: connectOpen ? "translate3d(0,0,0)" : "translate3d(-4px,0,0)",
+              transition: `opacity 200ms ease, transform 280ms ${EASE}`,
               pointerEvents: connectOpen ? "auto" : "none",
             }}
           >
@@ -200,63 +162,53 @@ export function MobileNav() {
                 className="size-full"
               />
             </button>
-          </Liquid.Item>
+          </div>
 
           {/* Avatar */}
-          <Liquid.Item
-            x={connectOpen ? ICON_OPEN + 8 : 0}
-            y={0}
-            transition={motion}
-            radius={14}
-            className="block"
+          <div
+            className="absolute"
             style={{
-              position: "absolute",
               left: PAD,
               top: PAD,
               width: icon,
               height: icon,
-              display: "block",
+              transform: connectOpen
+                ? `translate3d(${ICON_OPEN + 8}px,0,0)`
+                : "translate3d(0,0,0)",
+              transition: `transform 280ms ${EASE}, width 280ms ${EASE}, height 280ms ${EASE}`,
             }}
           >
             <AvatarLink size={icon} />
-          </Liquid.Item>
+          </div>
 
           {/* Hamburger */}
-          <Liquid.Item
-            x={0}
-            y={0}
-            transition={motion}
-            radius={14}
-            className="block"
+          <div
+            className="absolute"
             style={{
-              position: "absolute",
               right: PAD,
               top: PAD,
               width: icon,
               height: icon,
-              display: "block",
+              transition: `width 280ms ${EASE}, height 280ms ${EASE}`,
             }}
           >
             <HamburgerButton size={icon} onClick={openMenu} />
-          </Liquid.Item>
+          </div>
 
-          {/* Connect — collapses into the CTAs */}
-          <Liquid.Item
-            x={0}
-            y={0}
-            scale={1}
-            transition={motion}
-            radius={14}
-            className="block"
+          {/* Connect */}
+          <div
+            className="absolute"
             style={{
-              position: "absolute",
               left: connectLeft,
               right: PAD + ICON_CLOSED + 20,
               top: PAD,
               height: ICON_CLOSED,
-              display: "block",
               opacity: connectOpen ? 0 : 1,
-              transition: "opacity 220ms ease",
+              transform: connectOpen
+                ? "translate3d(0,8px,0) scale(0.96)"
+                : "translate3d(0,0,0) scale(1)",
+              transition: `opacity 180ms ease, transform 280ms ${EASE}`,
+              pointerEvents: connectOpen ? "none" : "auto",
             }}
           >
             <button
@@ -273,26 +225,22 @@ export function MobileNav() {
                 💬
               </span>
             </button>
-          </Liquid.Item>
+          </div>
 
-          {/* Build — flies out of Connect */}
-          <Liquid.Item
-            x={0}
-            y={connectOpen ? BUILD_OPEN_Y : 0}
-            scale={1}
-            transition={motion}
-            delay={connectOpen ? 20 : 0}
-            radius={14}
-            className="block"
+          {/* Build */}
+          <div
+            className="absolute"
             style={{
-              position: "absolute",
               left: PAD,
               right: PAD,
               top: PAD,
               height: BUTTON_H,
-              display: "block",
               opacity: connectOpen ? 1 : 0,
-              transition: "opacity 280ms ease",
+              transform: connectOpen
+                ? `translate3d(0,${BUILD_OPEN_Y}px,0)`
+                : "translate3d(0,0,0)",
+              transition: `opacity 200ms ease, transform 300ms ${EASE}`,
+              transitionDelay: connectOpen ? "20ms" : "0ms",
               pointerEvents: connectOpen ? "auto" : "none",
             }}
           >
@@ -302,26 +250,22 @@ export function MobileNav() {
               variant="filled"
               className="w-full"
             />
-          </Liquid.Item>
+          </div>
 
-          {/* Chat — flies out after Build */}
-          <Liquid.Item
-            x={0}
-            y={connectOpen ? CHAT_OPEN_Y : 0}
-            scale={1}
-            transition={motion}
-            delay={connectOpen ? 40 : 0}
-            radius={14}
-            className="block"
+          {/* Chat / Request a Collab */}
+          <div
+            className="absolute"
             style={{
-              position: "absolute",
               left: PAD,
               right: PAD,
               top: PAD,
               height: BUTTON_H,
-              display: "block",
               opacity: connectOpen ? 1 : 0,
-              transition: "opacity 280ms ease",
+              transform: connectOpen
+                ? `translate3d(0,${CHAT_OPEN_Y}px,0)`
+                : "translate3d(0,0,0)",
+              transition: `opacity 200ms ease, transform 300ms ${EASE}`,
+              transitionDelay: connectOpen ? "40ms" : "0ms",
               pointerEvents: connectOpen ? "auto" : "none",
             }}
           >
@@ -331,10 +275,9 @@ export function MobileNav() {
               variant="outlined"
               className="w-full"
             />
-          </Liquid.Item>
+          </div>
         </div>
-      </Liquid>
-    </nav>
+      </nav>
     </>
   );
 }

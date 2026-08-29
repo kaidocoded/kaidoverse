@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <main className="pt-32">
+    <main className="flex flex-1 flex-col pt-32">
       <PageHero
         title="Projects"
         subtitle="Curious what design projects i’ve built or contributed to? Take a look."

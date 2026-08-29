@@ -56,13 +56,6 @@ body {
   background: var(--ink);
   color: var(--primary);
   font-family: var(--font-sans);
-  padding-bottom: calc(var(--mobile-nav-reserve, 84px) + 40px);
-}
-
-@media (min-width: 1024px) {
-  body {
-    padding-bottom: 0;
-  }
 }
 
 ::selection {

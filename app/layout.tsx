@@ -46,7 +46,7 @@ export default function RootLayout({
           <Header />
           <MobileNav />
           <NavOverlay />
-          {children}
+          <div className="flex min-h-dvh flex-col">{children}</div>
         </SiteShell>
       </body>
     </html>

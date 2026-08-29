@@ -10,7 +10,7 @@ import { SectionLabel, SplitSection } from "@/components/split-section";
 
 export default function Home() {
   return (
-    <main>
+    <main className="flex flex-1 flex-col">
       <div className="relative mx-auto min-w-0 max-w-[1440px] overflow-x-hidden">
         <div className="pointer-events-none absolute inset-y-0 left-[400px] hidden w-px bg-primary/20 lg:block" />
 

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function JourneyPage() {
   return (
-    <main className="pt-32">
+    <main className="flex flex-1 flex-col pt-32">
       <PageHero title={journey.heading} subtitle={journey.subhead} />
       <div className="px-5 pb-16">
         <JourneySection showIntro={false} />
